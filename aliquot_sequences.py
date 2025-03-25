@@ -14,9 +14,10 @@ def aliquot_sequence(starting_value):
     infinite_loop = False
     while current_number != 1:
         print(f'\n\nThe number is {current_number}.')
-        print(f'Its factors are {', '.join(find_proper_factors(current_number))}.')
-        for i in range(0,len(find_proper_factors(current_number))):
-            sum_of_factors += int(find_proper_factors(current_number)[i])
+        factors = find_proper_factors(current_number)
+        print(f'Its factors are {', '.join(factors)}.')
+        for i in range(0,len(factors)):
+            sum_of_factors += int(factors[i])
         print(f'The sum of its factors is {sum_of_factors}.')
         if current_number > sum_of_factors:
             print(f'{current_number} is a deficient number.')
