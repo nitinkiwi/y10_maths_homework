@@ -1,10 +1,28 @@
-
-def find_proper_factors(num):
+import time
+def find_proper_factors_str(num):
     proper_factors = []
     for i in range(1, int(num) + 1):
         if num % i == 0 and i != num:
             proper_factors.append(str(round(i)))
     return proper_factors
+
+def find_proper_factors_int(num):
+    proper_factors = []
+    for i in range(1, int(num) + 1):
+        if num % i == 0 and i != num:
+            proper_factors.append(round(i))
+    return proper_factors
+
+def question_checker(question, answer):
+    user_input = 'none given'
+    while user_input not in answer:
+        user_input = input(question)
+        if user_input in answer:
+            break
+        else:
+            print('\nPlease enter a provided option.')
+            time.sleep(1)
+    return user_input
 
 def aliquot_sequence(starting_value):
     current_number = starting_value
@@ -14,10 +32,9 @@ def aliquot_sequence(starting_value):
     infinite_loop = False
     while current_number != 1:
         print(f'\n\nThe number is {current_number}.')
-        factors = find_proper_factors(current_number)
-        print(f'Its factors are {', '.join(factors)}.')
-        for i in range(0,len(factors)):
-            sum_of_factors += int(factors[i])
+        print(f'Its factors are {', '.join(find_proper_factors_str(current_number))}.')
+        for i in range(0,len(find_proper_factors_str(current_number))):
+            sum_of_factors += int(find_proper_factors_str(current_number)[i])
         print(f'The sum of its factors is {sum_of_factors}.')
         if current_number > sum_of_factors:
             print(f'{current_number} is a deficient number.')
@@ -44,18 +61,70 @@ def aliquot_sequence(starting_value):
         print(f'\nThere were {number_of_terms} terms in that aliquot sequence.')
         print('End of line.')
 
+def type_of_number(start_number, end_number):
+    factors = []
+    for i in range(start_number, end_number+1):
+        factors = sum(find_proper_factors_int(i))
+        if i > factors:
+            print(f'{i}. Deficient')
+        elif i < factors:
+            print(f'{i}. Abundant')
+        else:
+            print(f'{i}. Perfect')
 continuing = 'yes'
 
-while continuing.lower() == 'yes':
-    question_answer = 'invalid'
-    user_number = int(input('\n\nChoose a number to begin the aliquot sequence with: '))
-    aliquot_sequence(user_number)
-    while question_answer == 'invalid':
-        continuing = input('\n\nWould you like to do another aliquot sequence calculation? (yes/no) ')
-        if continuing != 'yes' and continuing != 'no':
-            print("\n\nPlease type either 'yes' or 'no'.")
-        else:
-            question_answer = 'valid'
+def number_of_terms(start_number, end_number):
+    sum_of_factors = 0
+    number_of_terms = 0
+    list_of_terms = []
+    for i in range(int(start_number), int(end_number)+1):
+        current_number = i
+        while current_number != 1:
+            for p in range(0,len(find_proper_factors_str(current_number))):
+                sum_of_factors = sum(find_proper_factors_int(p))
+            current_number = sum_of_factors
+            number_of_terms += 1
+            if number_of_terms == 1 and sum_of_factors == current_number:
+                print(f'{current_number}. Infinite terms (Perfect number)')
+                break
+            if sum_of_factors in list_of_terms:
+                print(f'{current_number}. Infinite terms (Amicable number)')
+                break
+            list_of_terms.append(sum_of_factors)
+            sum_of_factors = 0
+            if current_number == 1:
+                print(f'{current_number}. {number_of_terms} terms')
+        list_of_terms = []
+
+while True:
+    mode = question_checker('''\nWhich mode do you want?\nMode 1 calculates the aliquot sequence for a specific number.\nMode 2 shows you whether numbers are perfect, abundant or deficifient over a specified range.\nMode 3 shows how many terms numbers have in their aliquot sequences.
+                            \n\nEnter 'Mode 1', 'Mode 2' or 'Mode 3': ''', ['Mode 1', 'Mode 2', 'Mode 3', 'q'])
+    if mode == 'Mode 1':
+        continuing = 'yes'
+        while continuing.lower() == 'yes':
+            user_number = int(input('\n\nChoose a number to begin the aliquot sequence with: '))
+            aliquot_sequence(user_number)
+            continuing = question_checker('\n\nWould you like to do another aliquot sequence calculation? (yes/no) ', ['yes', 'no'])
+    elif mode == 'Mode 2':
+        continuing = 'yes'
+        while continuing.lower() == 'yes':
+            number_one = int(input('What do you want your starting number to be? '))
+            number_two = int(input('What do you want your finishing number to be? (Make sure this number is less than your first number) '))
+            time.sleep(1)
+            print()
+            type_of_number(number_one, number_two)
+            continuing = question_checker('\n\nWould you like to do another calculation? (yes/no) ', ['yes', 'no'])
+    elif mode == 'Mode 3':
+        continuing = 'yes'
+        while continuing.lower() == 'yes':
+            number_one = int(input('What do you want your starting number to be? '))
+            number_two = int(input('What do you want your finishing number to be? (Make sure this number is less than your first number) '))
+            time.sleep(1)
+            print()
+            number_of_terms(number_one, number_two)
+            continuing = question_checker('\n\nWould you like to do another calculation? (yes/no) ', ['yes', 'no'])
 
 
-print('\n\nEnd of program.\n\n')
+    elif mode == 'q':
+        print('\n\nEnd of program.\n\n')
+        break
