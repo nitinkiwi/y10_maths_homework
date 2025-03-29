@@ -6,12 +6,12 @@ def find_proper_factors_str(num):
             proper_factors.append(str(round(i)))
     return proper_factors
 
-def find_proper_factors_int(num):
+def find_proper_factors_sum(num):
     proper_factors = []
     for i in range(1, int(num) + 1):
         if num % i == 0 and i != num:
             proper_factors.append(round(i))
-    return proper_factors
+    return sum(proper_factors)
 
 def question_checker(question, answer):
     user_input = 'none given'
@@ -64,7 +64,7 @@ def aliquot_sequence(starting_value):
 def type_of_number(start_number, end_number):
     factors = []
     for i in range(start_number, end_number+1):
-        factors = sum(find_proper_factors_int(i))
+        factors = find_proper_factors_sum(i)
         if i > factors:
             print(f'{i}. Deficient')
         elif i < factors:
@@ -73,32 +73,26 @@ def type_of_number(start_number, end_number):
             print(f'{i}. Perfect')
 continuing = 'yes'
 
-def number_of_terms(start_number, end_number):
-    sum_of_factors = 0
-    number_of_terms = 0
-    list_of_terms = []
-    for i in range(int(start_number), int(end_number)+1):
-        current_number = i
-        while current_number != 1:
-            for p in range(0,len(find_proper_factors_str(current_number))):
-                sum_of_factors = sum(find_proper_factors_int(p))
-            current_number = sum_of_factors
-            number_of_terms += 1
-            if number_of_terms == 1 and sum_of_factors == current_number:
-                print(f'{current_number}. Infinite terms (Perfect number)')
+def num_of_terms(start_num, end_num):
+    for i in range(start_num, end_num+1):
+        terms = 1
+        current_num = i
+        factors = []
+        factors.append(current_num)
+        while current_num != 1:
+            current_num = find_proper_factors_sum(current_num)
+            if current_num in factors:
+                terms = 'Infinite'
                 break
-            if sum_of_factors in list_of_terms:
-                print(f'{current_number}. Infinite terms (Amicable number)')
-                break
-            list_of_terms.append(sum_of_factors)
-            sum_of_factors = 0
-            if current_number == 1:
-                print(f'{current_number}. {number_of_terms} terms')
-        list_of_terms = []
+            factors.append(current_num)
+            terms += 1
+        print(f'{i}. {terms} terms')
+        factors = []
+
 
 while True:
     mode = question_checker('''\nWhich mode do you want?\nMode 1 calculates the aliquot sequence for a specific number.\nMode 2 shows you whether numbers are perfect, abundant or deficifient over a specified range.\nMode 3 shows how many terms numbers have in their aliquot sequences.
-                            \n\nEnter 'Mode 1', 'Mode 2' or 'Mode 3': ''', ['Mode 1', 'Mode 2', 'Mode 3', 'q'])
+                            \n\nEnter 'Mode 1', 'Mode 2', 'Mode 3' or 'q' to quit: ''', ['Mode 1', 'Mode 2', 'Mode 3', 'q'])
     if mode == 'Mode 1':
         continuing = 'yes'
         while continuing.lower() == 'yes':
@@ -120,8 +114,7 @@ while True:
             number_one = int(input('What do you want your starting number to be? '))
             number_two = int(input('What do you want your finishing number to be? (Make sure this number is less than your first number) '))
             time.sleep(1)
-            print()
-            number_of_terms(number_one, number_two)
+            num_of_terms(number_one, number_two)
             continuing = question_checker('\n\nWould you like to do another calculation? (yes/no) ', ['yes', 'no'])
 
 
