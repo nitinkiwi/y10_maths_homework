@@ -73,7 +73,7 @@ def type_of_number(start_number, end_number):
             print(f'{i}. Perfect')
 continuing = 'yes'
 
-def num_of_terms(start_num, end_num):
+def num_of_terms(start_num, end_num, safety):
     for i in range(start_num, end_num+1):
         terms = 1
         current_num = i
@@ -81,7 +81,12 @@ def num_of_terms(start_num, end_num):
         factors = []
         factors.append(current_num)
         infinite_num = ''
-        while current_num != 1:
+        limit = 0
+        if safety == 'yes':
+            limit = 15
+        else:
+            limit = 1000
+        while current_num != 1 and terms <= limit:
             current_num = find_proper_factors_sum(current_num)
             if current_num == beginning_value:
                 terms = 'Infinite'
@@ -93,8 +98,11 @@ def num_of_terms(start_num, end_num):
                 break
             factors.append(current_num)
             terms += 1
-        print(f'{i}. {terms} terms {infinite_num}')
-        factors = []
+        if terms != 'Infinite' and int(terms) <= limit:
+            print(f'{i}. {terms} terms {infinite_num}')
+            factors = []
+        else:
+            print(f'{i}. Over {limit} terms')
 
 
 while True:
@@ -110,7 +118,7 @@ while True:
         continuing = 'yes'
         while continuing.lower() == 'yes':
             number_one = int(input('What do you want your starting number to be? '))
-            number_two = int(input('What do you want your finishing number to be? (Make sure this number is less than your first number) '))
+            number_two = int(input('What do you want your finishing number to be? (Make sure this number is higher than your first number) '))
             assert number_one < number_two
             time.sleep(1)
             print()
@@ -120,10 +128,11 @@ while True:
         continuing = 'yes'
         while continuing.lower() == 'yes':
             number_one = int(input('What do you want your starting number to be? '))
-            number_two = int(input('What do you want your finishing number to be? (Make sure this number is less than your first number) '))
+            number_two = int(input('What do you want your finishing number to be? (Make sure this number is higher than your first number) '))
+            safety_check = question_checker('Do you want the program to skip over numbers that have an aliquot sequence that exceeds 15 terms? (yes/no) ', ['yes', 'no'])
             assert number_one < number_two
             time.sleep(1)
-            num_of_terms(number_one, number_two)
+            num_of_terms(number_one, number_two, safety_check)
             continuing = question_checker('\n\nWould you like to do another calculation? (yes/no) ', ['yes', 'no'])
     elif mode == 'q':
         print('\n\nEnd of program.\n\n')
